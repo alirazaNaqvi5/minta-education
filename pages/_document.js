@@ -1,41 +1,42 @@
-import Document, { Html, Head, Main, NextScript } from "next/document";
-const APP_NAME = "minta";
-class MyDocument extends Document {
-	render() {
-		return (
-			<Html>
-				<Head>
-					<link
-						rel="icon"
-						type="image/png"
-						href="/images/favicon.png"
-					></link>
-					<meta name="application-name" content={APP_NAME} />
-					<meta name="apple-mobile-web-app-capable" content="yes" />
-					<meta
-						name="apple-mobile-web-app-status-bar-style"
-						content="default"
-					/>
-					<meta
-						name="apple-mobile-web-app-title"
-						content={APP_NAME}
-					/>
-					<meta name="theme-color" content="#FFFFFF" />
-					<link
-						rel="apple-touch-icon"
-						sizes="180x180"
-						href="/icons/apple-touch-icon.png"
-					/>
-					<link rel="manifest" href="/manifest.json" />
-					<link rel="shortcut icon" href="/images/favicon.png" />
-				</Head>
-				<body>
-					<Main />
-					<NextScript />
-				</body>
-			</Html>
-		);
-	}
+// index.js
+import React from 'react';
+import MainBanner from '../components/VendorCertificationTraining/MainBanner';
+import PopularCourses from '../components/VendorCertificationTraining/PopularCourses';
+import FunFacts from '../components/Common/FunFacts';
+import CourseAdvisor from '../components/VendorCertificationTraining/CourseAdvisor';
+import PremiumAccess from '../components/VendorCertificationTraining/PremiumAccess';
+import Testimonials from '../components/Common/Testimonials';
+import ViewAllCourses from '../components/VendorCertificationTraining/ViewAllCourses';
+import SubscribeForm from '../components/Common/SubscribeForm';
+import SEO from '@/components/SEO';
+import useTranslation from 'next-translate/useTranslation';
+import axios from 'axios';
+import baseUrl from '@/utils/baseUrl';
+
+const Index = ({ courses }) => {
+    const { t } = useTranslation("distance-learning");
+    return (
+        <>
+            <SEO title={t("pagetitle")} description={t("bannersubtitle")} />
+            <MainBanner />
+            <PopularCourses data={courses.courses} />
+            <FunFacts />
+            <CourseAdvisor />
+            <PremiumAccess />
+            <Testimonials />
+            <ViewAllCourses />
+            <SubscribeForm />
+        </>
+    );
+};
+
+export async function getServerSideProps(ctx) {
+    try {
+        const res = await axios.get(`${baseUrl}/api/v1/courses/homepage-courses`);
+        return { props: { courses: res.data } };
+    } catch (error) {
+        return { props: { courses: {} } }; // Return empty object on error
+    }
 }
 
-export default MyDocument;
+export default Index;
